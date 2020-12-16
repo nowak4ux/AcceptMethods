@@ -60,20 +60,24 @@ then
 	then
 		gobuster dir -a $3 -w $2 -u $1 -x $4 -t64|grep "(Status"|cut -d "(" -f1 > gobuster_log.txt
 	fi
-	
-	gobuster dir -a $3 -w $2 -u $1 -t64|grep "(Status"|cut -d "(" -f1 > gobuster_log.txt
-fi
 
-gobuster dir -w $2 -u $1 -t64|grep "(Status"|cut -d "(" -f1 > gobuster_log.txt
+	if [[ $4 == "" ]]
+	then
+		gobuster dir -a $3 -w $2 -u $1 -t64|grep "(Status"|cut -d "(" -f1 > gobuster_log.txt
+	fi
+
+else
+	gobuster dir -w $2 -u $1 -t64|grep "(Status"|cut -d "(" -f1 > gobuster_log.txt
+fi
 
 for lp in $(cat gobuster_log.txt)
 do
 	if [[ $3 != "" ]]
 	then
 		curl -X OPTIONS $1$lp -v -A $3 1>/dev/null 2>>curl_log.txt;
+	else
+		curl -X OPTIONS $1$lp -v 1>/dev/null 2>>curl_log.txt;
 	fi
-
-	curl -X OPTIONS $1$lp -v 1>/dev/null 2>>curl_log.txt;
 done
 
 echo -e "\n================================="
